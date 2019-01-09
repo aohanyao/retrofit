@@ -25,6 +25,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Use a custom HTTP verb for a request.
+ * 自定义请求方式，Retrofit实现了常用的几个请求方式
+ * 更多的可以选择自己去实现
  * <pre><code>
  * interface Service {
  *   &#064;HTTP(method = "CUSTOM", path = "custom/endpoint/")

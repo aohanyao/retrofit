@@ -76,6 +76,7 @@ public @interface Query {
 
   /**
    * Specifies whether the parameter {@linkplain #value() name} and value are already URL encoded.
+   * 是否已经经过了URL 编码，默认是false，如果是false，他会重新编码一次，如果是true，则直接传输
    */
   boolean encoded() default false;
 }

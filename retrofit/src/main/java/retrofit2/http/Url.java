@@ -26,6 +26,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * URL resolved against the {@linkplain Retrofit#baseUrl() base URL}.
+ * TODO 用这个的话，是否是在GET情况不用填写请求路径
  * <pre><code>
  * &#64;GET
  * Call&lt;ResponseBody&gt; list(@Url String url);

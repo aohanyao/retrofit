@@ -17,24 +17,31 @@ package retrofit2;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.List;
 
 import static retrofit2.Utils.methodError;
 
+// 抽象类，那就是有实现类咯
 abstract class ServiceMethod<T> {
-  static <T> ServiceMethod<T> parseAnnotations(Retrofit retrofit, Method method) {
-    RequestFactory requestFactory = RequestFactory.parseAnnotations(retrofit, method);
 
-    Type returnType = method.getGenericReturnType();
-    if (Utils.hasUnresolvableType(returnType)) {
-      throw methodError(method,
-          "Method return type must not include a type variable or wildcard: %s", returnType);
+    static <T> ServiceMethod<T> parseAnnotations(Retrofit retrofit, Method method) {
+        // 请求工厂
+        RequestFactory requestFactory = RequestFactory.parseAnnotations(retrofit, method);
+        // 获取方法的返回类型
+        Type returnType = method.getGenericReturnType();
+        // 判断是否是我当前无法处理的返回类型
+        if (Utils.hasUnresolvableType(returnType)) {
+            // 抛出一个方法异常
+            // TODO 这里就可以推断出Retrofit所支持的类型
+            throw methodError(method,
+                    "Method return type must not include a type variable or wildcard: %s", returnType);
+        }
+        if (returnType == void.class) {
+            throw methodError(method, "Service methods cannot return void.");
+        }
+        return HttpServiceMethod.parseAnnotations(retrofit, method, requestFactory);
     }
-    if (returnType == void.class) {
-      throw methodError(method, "Service methods cannot return void.");
-    }
 
-    return HttpServiceMethod.parseAnnotations(retrofit, method, requestFactory);
-  }
 
-  abstract T invoke(Object[] args);
+    abstract T invoke(Object[] args);
 }

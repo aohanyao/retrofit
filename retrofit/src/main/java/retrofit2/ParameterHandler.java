@@ -24,7 +24,9 @@ import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 
 import static retrofit2.Utils.checkNotNull;
-
+/**
+ * 参数处理者
+ */
 abstract class ParameterHandler<T> {
   abstract void apply(RequestBuilder builder, @Nullable T value) throws IOException;
 
