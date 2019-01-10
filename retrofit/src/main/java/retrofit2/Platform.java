@@ -165,14 +165,21 @@ class Platform {
         List<? extends CallAdapter.Factory> defaultCallAdapterFactories(
                 @Nullable Executor callbackExecutor) {
             if (callbackExecutor == null) throw new AssertionError();
+
+            // 返回一个只有默认转换器的list集合
             return singletonList(new ExecutorCallAdapterFactory(callbackExecutor));
         }
 
+        /**
+         * 安卓平台下，主线程回调使用的是Handler
+         */
         static class MainThreadExecutor implements Executor {
+            // 获取主线程的handler
             private final Handler handler = new Handler(Looper.getMainLooper());
 
             @Override
             public void execute(Runnable r) {
+                // 请求结果从这里回调回来了
                 handler.post(r);
             }
         }
