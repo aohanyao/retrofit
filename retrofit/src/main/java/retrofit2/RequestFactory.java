@@ -133,6 +133,7 @@ final class RequestFactory {
                     + ") doesn't match expected count (" + handlers.length + ")");
         }
 
+        // 这里创建整个请求所需的东西
         RequestBuilder requestBuilder = new RequestBuilder(httpMethod, baseUrl, relativeUrl,
                 headers, contentType, hasBody, isFormEncoded, isMultipart);
 
