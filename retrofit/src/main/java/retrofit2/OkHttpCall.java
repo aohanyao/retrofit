@@ -32,6 +32,8 @@ import static retrofit2.Utils.throwIfFatal;
 
 /**
  * Retrofit实现的一个请求回调
+ * <p>
+ * request to ok http call
  *
  * @param <T>
  */
@@ -128,11 +130,14 @@ final class OkHttpCall<T> implements Call<T> {
             call.cancel();
         }
 
+        // in self thread sync request
         call.enqueue(new okhttp3.Callback() {
             @Override
             public void onResponse(okhttp3.Call call, okhttp3.Response rawResponse) {
+                // rawResponse is okhttp response parse to retrofit response
                 Response<T> response;
                 try {
+                    // parse response
                     response = parseResponse(rawResponse);
                 } catch (Throwable e) {
                     throwIfFatal(e);
@@ -206,7 +211,8 @@ final class OkHttpCall<T> implements Call<T> {
 
     private okhttp3.Call createRawCall() throws IOException {
         // 这里就是使用okhttp3发起请求了
-        okhttp3.Call call = callFactory.newCall(requestFactory.create(args));
+        // the callFactory is OkHttpClient
+        okhttp3.Call call = callFactory.newCall(requestFactory.create(args)/**convert to okhttp3.Request*/);
         if (call == null) {
             throw new NullPointerException("Call.Factory returned null.");
         }
@@ -226,15 +232,21 @@ final class OkHttpCall<T> implements Call<T> {
 
         // Remove the body's source (the only stateful object) so we can pass the response along.
         // TODO 删除正文的源（唯一的有状态对象），以便我们可以传递响应。
+        // no content response body ?
         rawResponse = rawResponse.newBuilder()
                 .body(new NoContentResponseBody(rawBody.contentType(), rawBody.contentLength()))
                 .build();
 
+        // status code
         int code = rawResponse.code();
+        // less than 200 and more than the 300 is error
         if (code < 200 || code >= 300) {
             try {
                 // Buffer the entire body to avoid future I/O.
+                // convert buffer to ResponseBody
                 ResponseBody bufferedBody = Utils.buffer(rawBody);
+
+                //  throw error
                 return Response.error(bufferedBody, rawResponse);
             } finally {
                 rawBody.close();
@@ -242,13 +254,16 @@ final class OkHttpCall<T> implements Call<T> {
         }
 
         // 没有body的情况
+        // 204 is no content,205 is reset content
         if (code == 204 || code == 205) {
             rawBody.close();
             return Response.success(null, rawResponse);
         }
-
+        // catch exception response body
+        // convert buffer
         ExceptionCatchingResponseBody catchingBody = new ExceptionCatchingResponseBody(rawBody);
         try {
+            // use our  customer covert
             T body = responseConverter.convert(catchingBody);
             return Response.success(body, rawResponse);
         } catch (RuntimeException e) {

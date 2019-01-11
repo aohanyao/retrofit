@@ -123,6 +123,7 @@ final class RequestFactory {
         parameterHandlers = builder.parameterHandlers;
     }
 
+    // convert paramter
     okhttp3.Request create(Object[] args) throws IOException {
         @SuppressWarnings("unchecked") // It is an error to invoke a method with the wrong arg types.
                 ParameterHandler<Object>[] handlers = (ParameterHandler<Object>[]) parameterHandlers;
@@ -629,9 +630,10 @@ final class RequestFactory {
                 boolean encoded = field.encoded();
 
                 gotField = true;
-
                 Class<?> rawParameterType = Utils.getRawType(type);
                 if (Iterable.class.isAssignableFrom(rawParameterType)) {
+                    // the param is list
+
                     if (!(type instanceof ParameterizedType)) {
                         throw parameterError(method, position, rawParameterType.getSimpleName()
                                 + " must include generic type (e.g., "
@@ -639,11 +641,21 @@ final class RequestFactory {
                                 + "<String>)");
                     }
                     ParameterizedType parameterizedType = (ParameterizedType) type;
+
+
                     Type iterableType = Utils.getParameterUpperBound(0, parameterizedType);
-                    Converter<?, String> converter =
-                            retrofit.stringConverter(iterableType, annotations);
+
+                    // 这里对集合进行转换
+                    // if than null,return default  BuiltInConverters
+                    Converter<?, String> converter = retrofit.stringConverter(iterableType, annotations);
+
+
                     return new ParameterHandler.Field<>(name, converter, encoded).iterable();
+
+
+
                 } else if (rawParameterType.isArray()) {
+                    // is array
                     Class<?> arrayComponentType = boxIfPrimitive(rawParameterType.getComponentType());
                     Converter<?, String> converter =
                             retrofit.stringConverter(arrayComponentType, annotations);

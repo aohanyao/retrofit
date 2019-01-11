@@ -126,7 +126,6 @@ final class HttpServiceMethod<ResponseT, ReturnT> extends ServiceMethod<ReturnT>
 
     @Override
     ReturnT invoke(Object[] args) {
-        return callAdapter.adapt(
-                new OkHttpCall<>(requestFactory, args, callFactory, responseConverter));
+        return callAdapter.adapt(new OkHttpCall<>(requestFactory, args, callFactory, responseConverter));
     }
 }
