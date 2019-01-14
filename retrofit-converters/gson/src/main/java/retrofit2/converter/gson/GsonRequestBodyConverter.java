@@ -40,6 +40,7 @@ final class GsonRequestBodyConverter<T> implements Converter<T, RequestBody> {
   }
 
   @Override public RequestBody convert(T value) throws IOException {
+    // 这是将对象转换为Json字符串
     Buffer buffer = new Buffer();
     Writer writer = new OutputStreamWriter(buffer.outputStream(), UTF_8);
     JsonWriter jsonWriter = gson.newJsonWriter(writer);

@@ -40,6 +40,7 @@ final class HttpServiceMethod<ResponseT, ReturnT> extends ServiceMethod<ReturnT>
         CallAdapter<ResponseT, ReturnT> callAdapter = createCallAdapter(retrofit, method);
         // 数据返回类型
         Type responseType = callAdapter.responseType();
+
         if (responseType == Response.class || responseType == okhttp3.Response.class) {
             throw methodError(method, "'"
                     + Utils.getRawType(responseType).getName()

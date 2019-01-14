@@ -38,6 +38,10 @@ import javax.annotation.Nullable;
  * last to allow the other converters a chance to see their types.
  */
 public final class GsonConverterFactory extends Converter.Factory {
+    // 如果我们需要对结果进行自定义的转换的话
+    // 作统一的处理，只需要继承 Convert.Factory 然后实现相关的方法，
+    // 在 responseBodyConvert中进行统一的处理即可，也就是说，我们
+    // 根本就不需要GsonConvert这个库，我们完全可以自定义
     /**
      * Create an instance using a default {@link Gson} instance for conversion. Encoding to JSON and
      * decoding from JSON (when no charset is specified by a header) will use UTF-8.

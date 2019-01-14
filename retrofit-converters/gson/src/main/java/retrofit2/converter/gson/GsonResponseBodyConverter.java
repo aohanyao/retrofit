@@ -34,6 +34,7 @@ final class GsonResponseBodyConverter<T> implements Converter<ResponseBody, T> {
   }
 
   @Override public T convert(ResponseBody value) throws IOException {
+    // 这里就是对返回结果进行处理
     JsonReader jsonReader = gson.newJsonReader(value.charStream());
     try {
       T result = adapter.read(jsonReader);
