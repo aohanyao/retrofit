@@ -127,6 +127,7 @@ final class HttpServiceMethod<ResponseT, ReturnT> extends ServiceMethod<ReturnT>
 
     @Override
     ReturnT invoke(Object[] args) {
+        // 将call结果进行了 adapt
         return callAdapter.adapt(new OkHttpCall<>(requestFactory, args, callFactory, responseConverter));
     }
 }
