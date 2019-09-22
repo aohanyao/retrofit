@@ -493,6 +493,7 @@ final class RequestFactory {
 
                 Class<?> rawParameterType = Utils.getRawType(type);
                 gotQuery = true;
+                // 对集合的判断
                 if (Iterable.class.isAssignableFrom(rawParameterType)) {
                     if (!(type instanceof ParameterizedType)) {
                         throw parameterError(method, position, rawParameterType.getSimpleName()
@@ -502,15 +503,16 @@ final class RequestFactory {
                     }
                     ParameterizedType parameterizedType = (ParameterizedType) type;
                     Type iterableType = Utils.getParameterUpperBound(0, parameterizedType);
-                    Converter<?, String> converter =
-                            retrofit.stringConverter(iterableType, annotations);
+                    Converter<?, String> converter = retrofit.stringConverter(iterableType, annotations);
                     return new ParameterHandler.Query<>(name, converter, encoded).iterable();
                 } else if (rawParameterType.isArray()) {
+                    // 对数组的判断
                     Class<?> arrayComponentType = boxIfPrimitive(rawParameterType.getComponentType());
                     Converter<?, String> converter =
                             retrofit.stringConverter(arrayComponentType, annotations);
                     return new ParameterHandler.Query<>(name, converter, encoded).array();
                 } else {
+                    // 其它类型
                     Converter<?, String> converter =
                             retrofit.stringConverter(type, annotations);
                     return new ParameterHandler.Query<>(name, converter, encoded);
@@ -651,7 +653,6 @@ final class RequestFactory {
 
 
                     return new ParameterHandler.Field<>(name, converter, encoded).iterable();
-
 
 
                 } else if (rawParameterType.isArray()) {

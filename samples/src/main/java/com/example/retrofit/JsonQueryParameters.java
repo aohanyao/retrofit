@@ -55,8 +55,7 @@ public final class JsonQueryParameters {
           // NOTE: If you also have a JSON converter factory installed in addition to this factory,
           // you can call retrofit.requestBodyConverter(type, annotations) instead of having a
           // reference to it explicitly as a field.
-          Converter<?, RequestBody> delegate =
-              delegateFactory.requestBodyConverter(type, annotations, new Annotation[0], retrofit);
+          Converter<?, RequestBody> delegate =  delegateFactory.requestBodyConverter(type, annotations, new Annotation[0], retrofit);
           return new DelegateToStringConverter<>(delegate);
         }
       }
@@ -64,6 +63,7 @@ public final class JsonQueryParameters {
     }
 
     static class DelegateToStringConverter<T> implements Converter<T, String> {
+      /**代理*/
       private final Converter<T, RequestBody> delegate;
 
       DelegateToStringConverter(Converter<T, RequestBody> delegate) {
